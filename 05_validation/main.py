@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Query, Path
 from typing import Union
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -33,11 +34,43 @@ async def print_teacher_lecture(
 ):
     return f"lecture : {lecture}"
 
-#  path parameter validation
-@app.get("/lectures/{lecture_id}")
-async def print_lecture_info(
-    lecture_id: int = Path(
 
-        # lecture_id는 0보다 크고 10보다 작아야한다.
-    )
-)
+#  path parameter validation
+# @app.get("/lectures/{lecture_id}")
+# async def print_lecture_info(
+#     lecture_id: int = Path(
+
+#         # lecture_id는 0보다 크고 10보다 작아야한다.
+#     )
+# )
+
+
+class Teacher(BaseModel):
+    # ... : 필수 필드를 의미
+    is_working: str = Field(...,min_length=2)
+
+    name: str
+
+    # 필수 필드, 최소 2자, 최대 30자 이내로 입력
+    nickname: str = Field(..., min_length=2, max_length=30)
+
+    # 필수 필드, 18이상 100 이하 값만 허용
+    age: int = Field(..., ge=18, le=100)
+
+    # 필수 필드, 이메일 형식을 검사
+    email: str = Field(..., pattern="^[\w\.-]+@[\w\.-]+\.\w+$")
+    # ^[\w\.-]+ : 하나 이상의 문자, 숫자, 밑줄, 점으로 시작
+    # @ : 반드시 @가 포함
+    # \. : 반드시 .이 포함
+    # \w+ 하나 이상의 문자나 숫자가 와야함
+
+@app.post("/teachers/info")
+async def teacher_info(teacher: Teacher):
+
+    return {
+        "is_working" : teacher.is_working,
+        "name": teacher.name,
+        "nickname": teacher.nickname,
+        "age": teacher.age,
+        "email": teacher.email
+    }
