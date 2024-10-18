@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>홈 페이지</title>
+    <style>
+      .calculator {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 400px; /* 최대 너비 설정 */
+        box-sizing: border-box; /* 패딩을 포함하여 너비 계산 */
+      }
+      #result {
+        width: 100%;
+        height: 50px;
+        font-size: 24px;
+        text-align: right;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        box-sizing: border-box; /* 패딩을 포함하여 너비 계산 */
+      }
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4열 그리드 설정 */
+        gap: 10px; /* 버튼 간 간격 */
+      }
+      input[type="button"] {
+        height: 70px;
+        font-size: 24px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      input[type="button"]:hover {
+        background-color: #0056b3;
+      }
+      input[type="button"].operator {
+        background-color: #ffc107;
+      }
+      input[type="button"].operator:hover {
+        background-color: #e0a800;
+      }
+      input[type="button"].clear {
+        background-color: #dc3545;
+      }
+      input[type="button"].clear:hover {
+        background-color: #c82333;
+      }
+      h1 {
+        color: #333;
+      }
+      p {
+        font-size: 18px;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      #draw-button {
+        width: 50px;
+        height: 30px;
+        background-color: #007bff;
+        font-size: 12px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #draw-result {
+        margin-top: 20px;
+        min-height: 50px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        white-space: pre-wrap; /* 개행 유지 */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="calculator">
+      <h1 style="font-size: 24px; text-align: center">계산기</h1>
+      <input type="text" id="result" disabled />
+      <div class="button-grid">
+        <input type="button" value="7" onclick="appendToResult('7')" />
+        <input type="button" value="8" onclick="appendToResult('8')" />
+        <input type="button" value="9" onclick="appendToResult('9')" />
+        <input
+          type="button"
+          value="/"
+          class="operator"
+          onclick="appendToResult('/')"
+        />
+
+        <input type="button" value="4" onclick="appendToResult('4')" />
+        <input type="button" value="5" onclick="appendToResult('5')" />
+        <input type="button" value="6" onclick="appendToResult('6')" />
+        <input
+          type="button"
+          value="*"
+          class="operator"
+          onclick="appendToResult('*')"
+        />
+
+        <input type="button" value="1" onclick="appendToResult('1')" />
+        <input type="button" value="2" onclick="appendToResult('2')" />
+        <input type="button" value="3" onclick="appendToResult('3')" />
+        <input
+          type="button"
+          value="-"
+          class="operator"
+          onclick="appendToResult('-')"
+        />
+
+        <input type="button" value="C" class="clear" onclick="clearResult()" />
+        <input type="button" value="0" onclick="appendToResult('0')" />
+        <input type="button" value="=" onclick="calculateResult()" />
+        <input
+          type="button"
+          value="+"
+          class="operator"
+          onclick="appendToResult('+')"
+        />
+      </div>
+    </div>
+
+    <script>
+      function appendToResult(value) {
+        document.getElementById("result").value += value;
+      }
+
+      function clearResult() {
+        document.getElementById("result").value = "";
+      }
+
+      function calculateResult() {
+        const resultField = document.getElementById("result");
+        try {
+          resultField.value = eval(resultField.value); // eval을 사용하여 계산
+        } catch (error) {
+          resultField.value = "오류";
+        }
+      }
+    </script>
+
+    <div class="draw-container">
+      <h1>그림 그리기</h1>
+      <label for="select">그리기 모드:</label>
+      <select id="select">
+        <option value="증가">증가</option>
+        <option value="감소">감소</option>
+      </select>
+      <br />
+      <label for="word">나열할 문자:</label>
+      <input type="text" id="word" placeholder="한 글자 입력" maxlength="1" />
+      <label for="count">줄 개수:</label>
+      <input type="number" id="count" placeholder="개수 입력" min="1" />
+      <input
+        type="button"
+        id="draw-button"
+        value="그리기"
+        onclick="drawPicture()"
+      />
+
+      <div id="draw-result"></div>
+
+      <script>
+        async function drawPicture() {
+          const select = document.getElementById("select").value;
+          const word = document.getElementById("word").value;
+          const count = document.getElementById("count").value;
+
+          if (!word || word.length !== 1) {
+            alert("한 글자를 입력해주세요.");
+            return;
+          }
+          if (count <= 0) {
+            alert("개수는 1 이상이어야 합니다.");
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              "/drawPicture?select=" +
+                select +
+                "&word=" +
+                word +
+                "&count=" +
+                count,
+              {
+                method: "POST",
+              }
+            );
+            const data = await response.json();
+            if (response.ok) {
+              document.getElementById("draw-result").innerText = data.result;
+            } else {
+              document.getElementById("draw-result").innerText =
+                "오류: " + data.detail;
+            }
+          } catch (error) {
+            document.getElementById("draw-result").innerText =
+              "서버 오류: " + error;
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>
