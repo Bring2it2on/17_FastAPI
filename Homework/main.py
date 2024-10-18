@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from calc import simple_calcultor,slicing_calcultor,draw_picture
+from service.calc import simple_calcultor,slicing_calcultor,draw_picture
 from typing import Literal
-import schemas
+import schemas.schemas as schemas
 from exception_handlers import validation_exception_handler, zero_division_exception_handler
 
 app = FastAPI()
@@ -22,6 +22,8 @@ async def simpleCalculate(request: schemas.SimpleCalc):
     try:
         result = simple_calcultor(request.cal_type,request.num1,request.num2)
         return {"result": result}
+    except ZeroDivisionError as e:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     

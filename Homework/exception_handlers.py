@@ -1,6 +1,6 @@
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 
 # RequestValidationError 핸들러
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -17,7 +17,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         }
     )
 
-async def zero_division_exception_handler(request: Request, exc: ZeroDivisionError):
+def zero_division_exception_handler(request: Request, exc: ZeroDivisionError):
     return JSONResponse(
         status_code=400,
         content={
